@@ -2,38 +2,21 @@ import run from "aocrunner";
 
 const parseInput = (rawInput: string) => {
   return rawInput.split("\n").map(line => {
-    return [line[0].charCodeAt(0) - 64, line[2].charCodeAt(0) - 87]
+    return [line[0].charCodeAt(0) - 65, line[2].charCodeAt(0) - 88]
   })
 };
 
-const winningPlayset: Record<number, number> = { 1: 2, 2: 3, 3: 1 }
-
-const losingPlayset: Record<number, number> = { 1: 3, 2: 1, 3: 2 }
-
+function remEuclid(dividend: number, divisor: number) {
+  const absDivisor = Math.abs(divisor);
+  const quotient = Math.floor(dividend / absDivisor);
+  return (dividend - (absDivisor * quotient));
+}
 const part1 = (rawInput: string) => {
-  let myScore = 0;
-  const input = parseInput(rawInput);
-  input.forEach(el => {
-      myScore += 3 * (el[0] == el[1] ? 1: winningPlayset[el[0]] == el[1] ? 1 : 0) + el[1]
-  })
-  return myScore;
+  return parseInput(rawInput).reduce((acc, i) => (acc + remEuclid((i[1] - i[0] + 1), 3) * 3 + i[1] + 1), 0)
 };
 
 const part2 = (rawInput: string) => {
-  const input = parseInput(rawInput);
-  let myScore = 0;
-  input.forEach(el => {
-    if (el[1] == 2) {
-      myScore += 3 + el[0];
-    } else {
-      if (el[1] == 1) {
-        myScore += losingPlayset[el[0]]
-      } else {
-        myScore += winningPlayset[el[0]] + 6;
-      }
-    }
-  });
-  return myScore;
+  return parseInput(rawInput).reduce((acc, i) => (acc + 3 * (i[1]) + remEuclid(i[0] - 1 + i[1], 3) + 1), 0)
 };
 
 run({
@@ -46,6 +29,21 @@ run({
         C Z`,
         expected: 15,
       },
+      {
+        input: `
+        A Z`,
+        expected: 3,
+      },
+      {
+        input: `
+        B Z`,
+        expected: 9,
+      },
+      {
+        input: `
+        A Y`,
+        expected: 8,
+      },
     ],
     solution: part1,
   },
@@ -57,7 +55,7 @@ run({
         B X
         C Z`,
         expected: 12,
-      },
+      }
     ],
     solution: part2,
   },
